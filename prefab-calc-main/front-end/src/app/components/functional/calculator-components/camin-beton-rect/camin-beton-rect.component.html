@@ -1,0 +1,182 @@
+<p-divider></p-divider>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="flex flex-column">
+    <h3 class="m-0">Dimensiuni</h3>
+    <div class="flex flex-row flex-wrap gap-2 p-fluid col-12">
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="length">Lungime</label>
+        <p-inputNumber
+          id="length"
+          formControlName="length"
+          [min]="0.1"
+          [max]="10"
+          [step]="0.01"
+          [minFractionDigits]="2"
+          [suffix]="' m'"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          (onInput)="computeMaterialNeeded(); computeTotalCost()"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="width">Lățime</label>
+        <p-inputNumber
+          id="width"
+          formControlName="width"
+          [min]="0.1"
+          [max]="10"
+          [step]="0.01"
+          [minFractionDigits]="2"
+          [suffix]="' m'"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          (onInput)="computeMaterialNeeded(); computeTotalCost()"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="height">Înălțime</label>
+        <p-inputNumber
+          id="height"
+          formControlName="height"
+          [min]="0.1"
+          [max]="10"
+          [step]="0.01"
+          [minFractionDigits]="2"
+          [suffix]="' m'"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          (onInput)="computeMaterialNeeded(); computeTotalCost()"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="thickness">Grosime</label>
+        <p-inputNumber
+          id="thickness"
+          formControlName="thickness"
+          [min]="0.1"
+          [max]="0.5"
+          [step]="0.01"
+          (onInput)="computeTotalCost()"
+          [minFractionDigits]="2"
+          [suffix]="' m'"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </div>
+  <p-divider></p-divider>
+  <div class="flex flex-column">
+    <h3 class="m-0">Extra</h3>
+    <div class="flex flex-row flex-wrap gap-2 p-fluid col-12">
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="armature">Armare</label>
+        <p-dropdown
+          id="armature"
+          formControlName="armature"
+          [options]="armatureOptions"
+          optionLabel="name"
+          [showClear]="true"
+          placeholder="Alege un tip de armare"
+          (onChange)="computeMaterialNeeded(); computeTotalCost()"
+        ></p-dropdown>
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="result"
+          >Necesar fier</label
+        >
+        <input
+          pInputText
+          id="result"
+          [disabled]="true"
+          [value]="materialNeeded"
+        />
+      </div>
+    </div>
+    <div class="flex flex-row flex-wrap gap-2 p-fluid col-12">
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="withValve"
+          >Opțiuni cămin vane</label
+        >
+        <p-checkbox
+          formControlName="withValve"
+          (onChange)="computeTotalCost()"
+          [value]="true"
+          label="Cămin de vane"
+          name="withValve"
+          id="withValve"
+        />
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="pvcPipeNumber"
+          >Număr Țevi PVC</label
+        >
+        <p-inputNumber
+          id="pvcPipeNumber"
+          formControlName="pvcPipeNumber"
+          [min]="1"
+          [max]="24"
+          [step]="1"
+          (onInput)="computeTotalCost()"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          [disabled]="!form.get('withValve')?.value[0]"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        ></p-inputNumber>
+      </div>
+      <div class="flex-auto col-4">
+        <label class="block font-bold mb-2 mt-2" for="labor">Manoperă</label>
+        <p-inputNumber
+          id="labor"
+          formControlName="labor"
+          [min]="0.05"
+          [max]="1000"
+          [step]="0.05"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          [suffix]="' ore'"
+          (onInput)="computeTotalCost()"
+          decrementButtonClass="p-button-danger"
+          incrementButtonClass="p-button-success"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+        ></p-inputNumber>
+      </div>
+    </div>
+  </div>
+  <p-divider></p-divider>
+  <div class="flex flex-row justify-content-between">
+    <div class="flex flex-row flex-wrap align-items-center gap-6">
+      <h2 class="m-0">Total</h2>
+      <h2 class="text-green-500 m-0">{{ totalCost }} &nbsp; RON</h2>
+    </div>
+    <div class="flex flex-row gap-2">
+      <button
+        pButton
+        type="button"
+        label="Resetează"
+        class="p-button-danger"
+        (click)="resetForm()"
+      ></button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,88 @@
+<p-toolbar
+  styleClass="w-full z-5 fixed bg-translucent"
+  [style]="{
+    'margin-top': '-100px',
+    'backdrop-filter': 'blur(10px)',
+    'background-color': 'transparent',
+  }"
+>
+  <ng-template pTemplate="start"></ng-template>
+  <ng-template pTemplate="center">
+    <div class="flex flex-row gap-2">
+      <button
+        pRipple
+        class="p-button p-button-text"
+        (click)="goTo('calculator')"
+        [class]="getCurrentClass('calculator')"
+      >
+        Calculator
+      </button>
+      <button
+        pRipple
+        class="p-button p-button-text"
+        (click)="goTo('products')"
+        [class]="getCurrentClass('products')"
+      >
+        Produse
+      </button>
+      <button
+        pRipple
+        class="p-button p-button-text"
+        (click)="goTo('orders')"
+        [class]="getCurrentClass('orders')"
+      >
+        Comenzi
+      </button>
+      <button
+        pRipple
+        class="p-button p-button-text"
+        (click)="goTo('stats')"
+        [class]="getCurrentClass('stats')"
+      >
+        Statistici
+      </button>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex flex-row flex-wrap gap-2 align-items-center">
+      @if (authService.isLoggedIn()) {
+        <p-menu #menu appendTo="body" [popup]="true" [model]="menuItems">
+          <ng-template pTemplate="end">
+            <p-divider/>
+            <div
+              class="flex flex-row align-items-center justify-content-center gap-3"
+            >
+              <i class="pi pi-sun mb-2"></i>
+              <p-inputSwitch
+                [ngModel]="currentTheme.includes('dark')"
+                (onChange)="toggleDarkMode()"
+              ></p-inputSwitch>
+              <i class="pi pi-moon mb-2"></i>
+            </div>
+          </ng-template>
+        </p-menu>
+        <p-button
+          icon="pi pi-shop"
+          text
+          styleClass="p-button-rounded"
+          pTooltip="Către comanda curentă"
+          tooltipPosition="bottom"
+          [routerLink]="['/new-order']"
+        ></p-button>
+        <p-divider layout="vertical"></p-divider>
+        <div (click)="menu.toggle($event)">
+          <p>
+            Hei, <span class="toolbar-user">{{ username }}</span>
+          </p>
+        </div>
+      } @else {
+        <button
+          pButton
+          type="button"
+          label="Login"
+          (click)="goToLogin()"
+        ></button>
+      }
+    </div>
+  </ng-template>
+</p-toolbar>

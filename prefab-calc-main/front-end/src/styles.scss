@@ -1,0 +1,53 @@
+@import "primeflex/primeflex.css";
+@import "primeicons/primeicons.css";
+@import "material-icons/iconfont/material-icons.css";
+@import "primeng/resources/primeng.css";
+@import url('https://fonts.googleapis.com/css?family=Bricolage+Grotesque:300,400,500,700|Material+Icons');
+
+* {
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+body, html {
+  margin: 0;
+}
+
+.mb-1 {
+  margin-bottom: .25rem !important;
+}
+
+.mb-2 {
+  margin-bottom: .5rem !important;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mb-5 {
+  margin-bottom: 2rem !important;
+}
+
+.mt-1 {
+  margin-top: .25rem !important;
+}
+
+.mt-2 {
+  margin-top: .5rem !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.mt-5 {
+  margin-top: 1.75rem !important;
+}

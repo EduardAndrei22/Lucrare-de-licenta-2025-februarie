@@ -1,0 +1,262 @@
+<p-toast />
+
+<!-- change status dialog -->
+<p-dialog
+  header="Schimbare status comandă"
+  [(visible)]="displayChangeStatusDialog"
+  [modal]="true"
+  [closable]="true"
+  [resizable]="false"
+  [baseZIndex]="10000"
+  [style]="{ width: '30svw' }"
+  dismissableMask="true"
+  [draggable]="false"
+  [maximizable]="false"
+  appendTo="body"
+>
+  <div class="flex flex-column gap-2">
+    <p-dropdown
+      appendTo="body"
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      optionLabel="label"
+      placeholder="Selectează statusul"
+      styleClass="w-full"
+    ></p-dropdown>
+    <p-divider />
+    <div class="flex flex-row gap-1 justify-content-end">
+      <p-button
+        label="Anulează"
+        styleClass="p-button-secondary"
+        (click)="displayChangeStatusDialog = false"
+      ></p-button>
+      <p-button
+        label="Salvează"
+        styleClass="p-button-primary"
+        (click)="changeOrderStatus()"
+      ></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-confirmDialog dismissableMask="true" #cd>
+  <ng-template pTemplate="headless" let-message>
+    <div class="flex flex-column align-items-center p-5 border-round">
+      <div
+        class="border-circle bg-red-600 inline-flex justify-content-center align-items-center h-6rem w-6rem"
+      >
+        <i class="pi pi-exclamation-triangle text-white text-5xl"></i>
+      </div>
+      <span class="font-bold text-2xl block mb-2 mt-4">
+        {{ message.header }}
+      </span>
+      <p class="mb-0">{{ message.message.split("|")[0] }}</p>
+      <p class="mb-0 mt-0">{{ message.message.split("|")[1] }}</p>
+      <div class="flex align-items-center gap-2 mt-4">
+        <button
+          pButton
+          label="Nu"
+          (click)="cd.reject()"
+          class="p-button-outlined w-8rem"
+        ></button>
+        <button
+          pButton
+          label="Da"
+          (click)="cd.accept()"
+          class="w-8rem"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmDialog>
+
+<div class="m-0 p-2 px-4 flex flex-column lg:flex-row gap-2 col-12 h-full">
+  <div class="flex flex-column gap-2 w-full">
+    <div class="flex justify-content-between align-items-center">
+      <p class="text-2xl font-bold w-fit mb-0">Comenzi</p>
+      <p-button
+        [routerLink]="['/new-order']"
+        label="Mergi la comanda curentă"
+        text
+        icon="pi pi-chevron-right"
+        rounded="true"
+      ></p-button>
+    </div>
+    <p-accordion [multiple]="true">
+      @for (order of orders; track order.id) {
+        <p-card styleClass="p-fluid p-0 mt-2">
+          <p-accordionTab [headerStyle]="{ padding: '0px' }">
+            <ng-template pTemplate="header">
+              <div
+                class="flex flex-row justify-content-between w-full mr-4 align-items-center"
+              >
+                <div class="p-col-12 p-md-6">
+                  <p>Comanda #{{ order.id }}</p>
+                </div>
+                <div class="p-col-12 p-md-6">
+                  <p>Scadent la {{ order.date_due }}</p>
+                </div>
+                <div class="p-col-12 p-md-6">
+                  <p-tag
+                    [value]="order.status"
+                    [severity]="getSeverityByStatus(order.status)"
+                  ></p-tag>
+                </div>
+              </div>
+            </ng-template>
+            <p-divider />
+            <div class="p-grid">
+              <div
+                class="flex flex-column lg:flex-row lg:justify-content-between"
+              >
+                <div id="client-details-container">
+                  <p class="mb-0 text-xl font-bold">Detalii client</p>
+                  <div class="flex flex-row gap-4">
+                    <div class="flex flex-column">
+                      <div class="flex flex-row align-items-center gap-2">
+                        <i class="pi pi-user mt-3"></i>
+                        <p class="mb-0 text-l font-bold">Denumire</p>
+                      </div>
+                      <p class="mt-0">{{ order.client }}</p>
+                    </div>
+                    <div class="flex flex-column">
+                      <div class="flex flex-row align-items-center gap-2">
+                        <i class="pi pi-phone mt-3"></i>
+                        <p class="mb-0 text-l font-bold">Telefon</p>
+                      </div>
+                      <p class="mt-0">{{ order.client_phone }}</p>
+                    </div>
+                    <div class="flex flex-column">
+                      <div class="flex flex-row align-items-center gap-2">
+                        <i class="pi pi-envelope mt-3"></i>
+                        <p class="mb-0 text-l font-bold">Email</p>
+                      </div>
+                      <p class="mt-0">{{ order.client_email }}</p>
+                    </div>
+                  </div>
+                </div>
+                <p-divider [layout]="dividerLayout"></p-divider>
+                <div class="text-right">
+                  <p class="text-xl font-bold">Opțiuni comandă</p>
+                  <div class="flex flex-row gap-4">
+                    <!--                    <p-button-->
+                    <!--                      label="Editare"-->
+                    <!--                      icon="pi pi-pencil"-->
+                    <!--                      text-->
+                    <!--                      (onClick)="editOrder(order)"-->
+                    <!--                    ></p-button>-->
+                    @if (!["Anulată", "Finalizată"].includes(order.status)) {
+                      <p-button
+                        label="Schimbare status"
+                        icon="pi pi-refresh"
+                        text
+                        (onClick)="changeStatus(order)"
+                      ></p-button>
+                    }
+                    <p-button
+                      label="Șterge"
+                      icon="pi pi-trash"
+                      text
+                      (onClick)="deleteOrder(order)"
+                    ></p-button>
+                  </div>
+                </div>
+              </div>
+              <p-divider></p-divider>
+              <div class="p-col-12 p-md-6">
+                <p class="mb-0 text-xl font-bold">Produse</p>
+                <p-table
+                  [value]="order.items"
+                  dataKey="id"
+                  [scrollable]="true"
+                  scrollHeight="400px"
+                >
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th style="width: 10%"></th>
+                      <th class="flex flex-column flex-wrap">
+                        <span>Discount</span><span>global</span>
+                      </th>
+                      <th>Denumire</th>
+                      <th>Cantitate</th>
+                      <th>Preț unitar</th>
+                      <th>Discount</th>
+                      <th>Preț total</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-item>
+                    <tr
+                      [ngClass]="
+                        item.quantity > item.stock ? 'invalid-row' : ''
+                      "
+                    >
+                      <td>
+                        <p-image
+                          [src]="item.thumbnail.length > 2 ? item.thumbnail : getPlaceholderURL(item.name)"
+                          alt="product"
+                          width="75"
+                          height="75"
+                          preview="true"
+                        ></p-image>
+                      </td>
+                      <td>
+                        <p-tag
+                          [value]="item.globalDiscount ? 'Da' : 'Nu'"
+                          [severity]="
+                            item.globalDiscount ? 'success' : 'warning'
+                          "
+                        ></p-tag>
+                      </td>
+                      <td>{{ item.name }}</td>
+                      <td>
+                        {{ item.quantity }} buc
+                        <span class="font-italic">{{
+                          item.quantity > item.stock ? "(stoc insuficient)" : ""
+                        }}</span>
+                      </td>
+                      <td>{{ item.price }} lei</td>
+                      <td>{{ item.discount }}%</td>
+                      <td>{{ getItemTotal(item, order) }} lei</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+                <div class="flex flex-row justify-content-between">
+                  <div></div>
+                  <div class="flex flex-column w-20rem right-0">
+                    <div
+                      class="flex flex-row align-items-center justify-content-between"
+                    >
+                      <p class="mb-0 text-l font-bold">Subtotal</p>
+                      <p class="mb-0">{{ order.subtotal }} lei</p>
+                    </div>
+                    <div
+                      class="flex flex-row align-items-center justify-content-between"
+                    >
+                      <p class="mb-0 mt-0 text-l font-bold">Discount</p>
+                      <p class="mb-0 mt-0">
+                        {{ order.discount }}% ({{ getDiscountSum(order) }})
+                      </p>
+                    </div>
+                    <div
+                      class="flex flex-row align-items-center justify-content-between"
+                    >
+                      <p class="mb-0 mt-0 text-l font-bold">Transport</p>
+                      <p class="mb-0 mt-0">{{ order.shipping }} lei</p>
+                    </div>
+                    <p-divider />
+                    <div
+                      class="flex flex-row align-items-center justify-content-between"
+                    >
+                      <p class="mb-0 mt-0 text-xl font-bold">Total</p>
+                      <p class="mb-0 mt-0">{{ order.total }} lei</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-accordionTab>
+        </p-card>
+      }
+    </p-accordion>
+  </div>
+</div>

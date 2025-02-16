@@ -1,0 +1,37 @@
+.progress-spinner ::ng-deep .p-progress-spinner-circle {
+  stroke: var(--primary-400) !important;
+}
+
+::ng-deep {
+  .p-tabview {
+    background: transparent !important;
+  }
+
+  .p-tabview-nav-link {
+    background: transparent !important;
+  }
+
+  .p-tabview-panels {
+    display: none !important;
+  }
+
+  .p-tabview-nav {
+    background: transparent;
+  }
+
+  .p-datatable-thead {
+    background: var(--surface-ground);
+
+    * {
+      background: var(--surface-ground);
+    }
+  }
+
+  .p-datatable-tbody {
+    background: transparent;
+
+    * {
+      background: transparent;
+    }
+  }
+}

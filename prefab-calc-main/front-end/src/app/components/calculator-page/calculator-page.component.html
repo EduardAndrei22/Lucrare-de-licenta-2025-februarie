@@ -1,0 +1,161 @@
+<div class="w-full pl-3 pr-3 pb-3">
+  <div class="justify-content-center border-round-3xl">
+    <p-dataView
+      #dv
+      [value]="prefabItems"
+      [layout]="itemLayout"
+      class="border-round-3xl"
+    >
+      <ng-template pTemplate="header">
+        <div class="flex justify-content-start">
+          <p-dataViewLayoutOptions></p-dataViewLayoutOptions>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="list" let-prefabItems>
+        <div class="grid grid-nogutter">
+          @for (prefabItem of prefabItems; track prefabItem.id) {
+            <div class="col-12">
+              <div
+                class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3"
+              >
+                <div class="md:w-10rem relative">
+                  <img
+                    class="block xl:block mx-auto border-round w-full"
+                    [src]="prefabItem.thumbnail.length > 0 ? prefabItem.thumbnail : getPlaceholderURL(prefabItem.name)"
+                    [alt]="prefabItem.name"
+                  />
+                  <p-tag
+                    [value]="getValueByStock(prefabItem.instock).toUpperCase()"
+                    [severity]="getSeverityByStock(prefabItem.instock)"
+                    class="absolute"
+                    [style.left.px]="4"
+                    [style.top.px]="4"
+                  />
+                </div>
+                <div
+                  class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4"
+                >
+                  <div
+                    class="flex flex-row md:flex-column justify-content-between align-items-start gap-2"
+                  >
+                    <div>
+                      <div class="text-lg font-medium text-900 mt-2">
+                        {{ prefabItem.name }}
+                      </div>
+                      <div class="font-medium text-secondary text-sm">
+                        {{ prefabItem.description }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-column md:align-items-end gap-5">
+                    <div class="flex flex-column gap-4 mt-4">
+                      <div class="flex gap-2">
+                        <p-button
+                          [disabled]="prefabItem.instock === 0"
+                          icon="pi pi-calculator"
+                          class="flex-auto md:flex-initial white-space-nowrap"
+                          label="Calculează"
+                          (onClick)="loadPrefabItem(prefabItem)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </ng-template>
+      <ng-template pTemplate="grid" let-prefabItems>
+        <div class="grid grid-nogutter">
+          @for (prefabItem of prefabItems; track prefabItem.id) {
+            <div class="col-12 sm:col-6 md:col-3 xl_col6 p-2">
+              <div
+                class="p-4 border-1 surface-border surface-card border-round flex flex-column"
+              >
+                <div
+                  class="surface-50 flex justify-content-center border-round p-3"
+                >
+                  <div
+                    class="relative mx-auto flex align-items-center justify-content-center"
+                  >
+                    <p-tag
+                      [value]="
+                        getValueByStock(prefabItem.instock).toUpperCase()
+                      "
+                      [severity]="getSeverityByStock(prefabItem.instock)"
+                      class="absolute"
+                      [style.left.px]="4"
+                      [style.top.px]="4"
+                    />
+                    <p-image
+                      [src]="prefabItem.thumbnail.length > 0 ? prefabItem.thumbnail : getPlaceholderURL(prefabItem.name)"
+                      [alt]="prefabItem.name"
+                      width="100%"
+                      [preview]="true"
+                    />
+                  </div>
+                </div>
+                <div class="pt-4">
+                  <div
+                    class="flex flex-row justify-content-between align-items-start gap-2"
+                  >
+                    <div>
+                      <div class="text-lg font-medium text-900 mt-1">
+                        {{ prefabItem.name }}
+                      </div>
+                      <div class="font-medium text-secondary text-sm">
+                        {{ prefabItem.description }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-column gap-4 mt-4">
+                    <div class="flex gap-2">
+                      <p-button
+                        [disabled]="prefabItem.instock === 0"
+                        icon="pi pi-calculator"
+                        class="flex-auto md:flex-initial white-space-nowrap"
+                        label="Compute"
+                        (onClick)="loadPrefabItem(prefabItem)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </ng-template>
+    </p-dataView>
+
+    <p-sidebar [(visible)]="sidebarOpen" position="right" [blockScroll]="true">
+      <ng-template pTemplate="header">
+        <h2 class="p-sidebar-header">{{ currentPrefab.name }}</h2>
+      </ng-template>
+      @switch (currentPrefab.internalname) {
+        @case ("camin_beton_rect") {
+          <app-camin-beton-rect />
+        }
+        @case ("capac_camin_beton_rect") {
+          <app-capac-camin-beton-rect />
+        }
+        @case ("camin_rotund") {
+          <app-camin-beton-rotund />
+        }
+        @case ("capac_camin_rotund") {
+          <app-capac-camin-beton-rotund />
+        }
+        @case ("spalier") {
+          <app-spalier />
+        }
+      }
+    </p-sidebar>
+  </div>
+</div>
+
+<p-scrollTop
+  target="window"
+  styleClass="bg-primary-500 border-round-md p-ripple hover:bg-primary-400"
+  [threshold]="100"
+  icon="pi pi-arrow-up"
+/>

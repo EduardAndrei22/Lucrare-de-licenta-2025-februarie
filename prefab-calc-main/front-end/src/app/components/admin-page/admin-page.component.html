@@ -1,0 +1,14 @@
+<div class="flex">
+  <p-menu [model]="menuItems" class="mt-2 ml-2 h-full" />
+  <div>
+    @if (currentItem === "user_management") {
+      <app-user-manager />
+    } @else if (currentItem === "prefab_management") {
+      <app-prefab-management />
+    } @else if (currentItem === "variable_changer") {
+      <app-variable-changer />
+    } @else if (currentItem === "client_management") {
+      <app-client-management />
+    }
+  </div>
+</div>

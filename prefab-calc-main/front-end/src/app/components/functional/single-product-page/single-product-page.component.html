@@ -1,0 +1,173 @@
+<p-toast />
+<p-confirmDialog />
+
+<p-button
+  pTooltip="Înapoi la produse"
+  styleClass="p-button-rounded p-button-text"
+  class="back-button"
+  icon="pi pi-arrow-left"
+  (click)="navigateBack()"
+></p-button>
+
+<div class="w-full flex align-items-center justify-content-center">
+  <div class="flex flex-column lg:flex-row justify-space-around col-11">
+    <div class="flex flex-column gap-2 col-10 lg:col-4">
+      <h2 class="m-0">{{ item!.name }}</h2>
+      <p-divider />
+      <p-image
+        [src]="
+          item!.thumbnail!.length > 0
+            ? item!.thumbnail
+            : getPlaceholderURL(item!.name)
+        "
+        [alt]="item!.name"
+        [preview]="true"
+        [width]="'100%'"
+      />
+    </div>
+    <p-divider layout="vertical" />
+    <div class="flex flex-column gap-2 col-10 lg:col-8">
+      <div class="flex flex-row justify-content-between align-items-center">
+        <h2 class="m-0">Detalii</h2>
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-trash"
+          (click)="deleteCurrentProduct($event)"
+          class="p-button-rounded p-button-outlined p-button-danger"
+        ></button>
+      </div>
+      <p-divider />
+      <div class="flex xl:flex-row flex-column">
+        <div class="col-10 xl:col-5">
+          <p class="m-0 text-gray-400">
+            Cod produs:
+            <span
+              tooltipPosition="top"
+              pTooltip="Copiază"
+              class="cursor-pointer"
+              (click)="copyToClipboard(item?.product_code)"
+              >{{ item?.product_code }}</span
+            >
+          </p>
+          <p class="font-bold mb-0">Descriere</p>
+          <p class="m-0">{{ item?.description }}</p>
+
+          <div class="flex flex-row justify-content-between">
+            <p class="mb-0 font-bold">Categorie</p>
+            <p class="mb-0 font-bold">{{ item?.category }}</p>
+          </div>
+
+          <p class="font-bold mb-0">Dimensiuni</p>
+          @for (dimension of itemDimensions; track dimension.name) {
+            <div class="flex flex-row justify-content-between">
+              <p class="m-0">{{ dimension.name }}</p>
+              <p class="m-0">{{ dimension.value }}</p>
+            </div>
+          }
+
+          <div class="flex flex-row justify-content-between">
+            <p class="mb-0 font-bold">Cost</p>
+            <p class="mb-0 font-bold">{{ item?.cost }} RON</p>
+          </div>
+
+          <div class="flex flex-row justify-content-between">
+            <p class="mb-0 font-bold">Preț</p>
+            <p class="mb-0 font-bold">{{ item?.price }} RON</p>
+          </div>
+
+          <p-divider />
+
+          <div class="flex flex-row gap-2 mt-6">
+            <p-inputNumber
+              [inputStyle]="{ width: '150px' }"
+              [min]="1"
+              suffix=" buc"
+              [(ngModel)]="item!.quantity"
+            ></p-inputNumber>
+            <p-button
+              label="Adaugă la comandă"
+              (click)="addToCart(item)"
+            ></p-button>
+          </div>
+        </div>
+        <p-divider layout="vertical" />
+        <div class="col-10 xl:col-6">
+          <p class="mb-0 font-bold">Istoric stoc</p>
+          <p-divider />
+          <div class="grid">
+            <p class="m-0 col-4 font-bold">Dată</p>
+            <p class="m-0 col-2 font-bold">Stoc</p>
+            <p class="m-0 col-6 font-bold">Motiv</p>
+            <div class="w-full top-gradient"></div>
+            <div
+              #historyDiv
+              [scrollTop]="historyDiv.scrollHeight"
+              style="max-height: 300px; height: 300px; overflow-y: scroll"
+              class="grid w-full ml-0"
+            >
+              @for (entry of stockHistory; track entry.id) {
+                <div
+                  class="m-0 col-4"
+                  [ngClass]="
+                    isLastEntry(entry)
+                      ? 'font-bold current-stock'
+                      : 'prev-stock'
+                  "
+                >
+                  {{ entry.date }}
+                </div>
+                <div
+                  class="m-0 col-2 flex flex-row justify-content-between"
+                  [ngClass]="
+                    isLastEntry(entry)
+                      ? 'font-bold current-stock'
+                      : 'prev-stock'
+                  "
+                >
+                  <span>{{ entry.stock }}</span>
+                  <p class="m-0">
+                    ({{ entry.type === "+" ? "+" : "" }}{{ entry.quantity }})
+                  </p>
+                </div>
+                <div
+                  class="m-0 col-6"
+                  [ngClass]="
+                    isLastEntry(entry)
+                      ? 'font-bold current-stock'
+                      : 'prev-stock'
+                  "
+                >
+                  {{ entry.reason }}
+                </div>
+              }
+            </div>
+            <div class="flex w-full flex-row justify-content-between">
+              <div class="flex flex-row gap-2">
+                <input
+                  pInputText
+                  type="number"
+                  placeholder="Stoc"
+                  [(ngModel)]="stockChange"
+                  (focus)="selectCurrent($event)"
+                  [style]="{ width: '150px' }"
+                />
+                <input
+                  pInputText
+                  placeholder="Motiv"
+                  [style]="{ width: '200px' }"
+                  [(ngModel)]="stockReason"
+                />
+              </div>
+              <p-button
+                label="Modifică stoc"
+                (click)="changeStock()"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

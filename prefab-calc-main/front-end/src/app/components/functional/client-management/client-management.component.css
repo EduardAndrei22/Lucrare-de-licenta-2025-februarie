@@ -1,0 +1,14 @@
+::ng-deep .p-datatable table {
+  table-layout: fixed !important;
+}
+::ng-deep .p-column-resizer {
+  width: 16px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 40%,
+    var(--surface-300) 50%,
+    rgba(0, 0, 0, 0) 50%
+  ) !important;
+}
+
+/*# sourceMappingURL=client-management.component.css.map */

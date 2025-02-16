@@ -1,0 +1,15 @@
+.toolbar-user {
+  border-bottom: 2px dashed var(--text-color-secondary);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.margin-top-remove {
+  margin-top: -60px !important;
+}
+
+.active {
+  border-bottom: 1px solid var(--primary-500);
+}
+
+/*# sourceMappingURL=toolbar.component.css.map */

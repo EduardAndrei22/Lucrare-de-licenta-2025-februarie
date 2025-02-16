@@ -1,0 +1,168 @@
+<p-toast></p-toast>
+<p-confirmDialog />
+
+<p-dialog
+  modal="true"
+  header="Adaugă client"
+  [(visible)]="displayAddClientDialog"
+  [style]="{ width: '50vw', minWidth: '400px' }"
+  [draggable]="false"
+  dismissableMask="true"
+  maximizable="true"
+>
+  <p-divider />
+  <app-add-client-form />
+  <ng-template pTemplate="footer">
+    <div class="pl-2 mt-4 flex flex-row gap-2">
+      <p-button
+        type="reset"
+        label="Resetează"
+        styleClass="p-button-secondary"
+        (click)="resetForm()"
+      ></p-button>
+      <p-button type="submit" label="Adaugă" (click)="addClient()"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-card styleClass="p-2 m-0 ml-2 mt-2 p-fluid" [style]="{ width: '85svw' }">
+  <ng-template pTemplate="header">
+    <div
+      class="pl-4 pr-4 pt-4 flex flex-row justify-content-between align-items-center"
+    >
+      <h2 class="m-0">Clienți</h2>
+      <p-button
+        label="Adaugă client"
+        icon="pi pi-plus"
+        text
+        styleClass="p-button-rounded"
+        (click)="openAddClientDialog()"
+      ></p-button>
+    </div>
+    <p-divider></p-divider>
+  </ng-template>
+  <p-table
+    #dt
+    responsiveLayout="stack"
+    [breakpoint]="'960px'"
+    [value]="clientList"
+    [scrollable]="true"
+    scrollHeight="60svh"
+    dataKey="id"
+    editMode="row"
+    [resizableColumns]="true"
+    columnResizeMode="expand"
+    [rowHover]="true"
+    [tableStyle]="{ 'min-width': '150px' }"
+    sortMode="multiple"
+    [globalFilterFields]="['name', 'cui', 'email']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex flex-row justify-content-between align-items-center">
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              (input)="filterTable($event, dt)"
+              placeholder="Caută..."
+            />
+          </p-iconField>
+          <p-toggleButton
+            [onLabel]="'Mod editare'"
+            [offLabel]="'Mod vizionare'"
+            (onChange)="toggleEditMode($event)"
+            styleClass="ml-2"
+          ></p-toggleButton>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        @for (col of cols; track $index) {
+          <th
+            [pSortableColumn]="col.field"
+            style="flex: 0 0 100px"
+            pResizableColumn
+          >
+            {{ col.header }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        }
+        <th style="flex: 0 0 40px"></th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-client
+      let-editing="editing"
+      let-ri="rowIndex"
+    >
+      <tr [pEditableRow]="client">
+        @for (col of cols; track $index) {
+          <td>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <input pInputText type="text" [(ngModel)]="client[col.field]" />
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{ client[col.field] }}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        }
+        <td
+          *ngIf="editModeEnabled"
+          pFrozenColumn
+          alignFrozen="right"
+          class="p-0 bg-transparent"
+        >
+          <div class="flex align-items-center justify-content-center gap-2 p-0">
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              (click)="onRowEdit(client)"
+              class="p-button-rounded p-button-text bg-primary-100 shadow-3 text-primary-900"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              (click)="onRowDelete(client, $event)"
+              class="p-button-rounded p-button-text bg-red-100 shadow-3 text-red-900"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              (click)="onRowEditSave(client)"
+              class="p-button-rounded p-button-text p-button-success mr-2 bg-green-100 shadow-3 text-green-900"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              (click)="onRowEditCancel(client, ri)"
+              class="p-button-rounded p-button-text p-button-danger bg-red-100 shadow-3 text-red-900"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

@@ -1,0 +1,109 @@
+<p-toast></p-toast>
+
+<div
+  class="p-grid grid-nogutter flex justify-content-center align-items-center"
+  style="height: 100%; min-height: 100svh"
+>
+  <div class="login-panels flex flex-row flex-wrap p-fluid p-8 gap-8">
+    <p-card class="flex">
+      <h1>Înregistrare</h1>
+      <p>Introdu informațiile mai jos</p>
+      <form [formGroup]="registerForm" (ngSubmit)="registerUser()">
+        <div class="mt-2">
+          <p-floatLabel>
+            <input
+              pInputText
+              formControlName="registerUsername"
+              type="text"
+              id="registerUsername"
+            />
+            <label for="registerUsername">Nume utilizator</label>
+          </p-floatLabel>
+        </div>
+        <div class="mt-5">
+          <p-floatLabel>
+            <input
+              pInputText
+              formControlName="registerEmail"
+              type="text"
+              id="registerEmail"
+            />
+            <label for="registerEmail">E-mail</label>
+          </p-floatLabel>
+        </div>
+        <div class="mt-5">
+          <p-floatLabel>
+            <p-password
+              [toggleMask]="true"
+              formControlName="registerPassword"
+              type="text"
+              id="registerPassword"
+            />
+            <label for="registerPassword">Parolă</label>
+          </p-floatLabel>
+        </div>
+        <div class="mt-5">
+          <p-floatLabel>
+            <p-password
+              [toggleMask]="true"
+              [feedback]="false"
+              formControlName="registerPasswordConfirm"
+              type="text"
+              id="registerPasswordConfirm"
+            />
+            <label for="registerPasswordConfirm">Confirmare parolă</label>
+          </p-floatLabel>
+        </div>
+        <div class="mt-5">
+          <p-floatLabel>
+            <p-password
+              [toggleMask]="true"
+              [feedback]="false"
+              formControlName="masterPassword"
+              type="text"
+              id="masterPassword"
+            />
+            <label for="masterPassword">Parolă Master</label>
+          </p-floatLabel>
+        </div>
+        <button
+          class="mt-5"
+          pButton
+          type="submit"
+          label="Înregistrare"
+        ></button>
+      </form>
+    </p-card>
+
+    <p-card class="flex">
+      <h1>Conectare</h1>
+      <p>Completează câmpurile de mai jos</p>
+      <form [formGroup]="loginForm" (ngSubmit)="loginUser()">
+        <div class="mt-2">
+          <p-floatLabel>
+            <input
+              pInputText
+              formControlName="loginUsername"
+              type="text"
+              id="loginUsername"
+            />
+            <label for="loginUsername">Nume utilizator</label>
+          </p-floatLabel>
+        </div>
+        <div class="mt-5">
+          <p-floatLabel>
+            <p-password
+              [toggleMask]="true"
+              [feedback]="false"
+              formControlName="loginPassword"
+              type="text"
+              id="loginPassword"
+            />
+            <label for="loginPassword">Parolă</label>
+          </p-floatLabel>
+        </div>
+        <button class="mt-5" pButton type="submit" label="Conectare"></button>
+      </form>
+    </p-card>
+  </div>
+</div>

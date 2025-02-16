@@ -1,0 +1,31 @@
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.125rem;
+  transition: all 0.4s ease-in-out;
+}
+
+#order-stats:hover {
+  background-color: var(--order-stats-hover);
+}
+
+#prefab-stats:hover {
+  background-color: var(--prefab-stats-hover);
+}
+
+#product-stats:hover {
+  background-color: var(--product-stats-hover);
+}
+
+.stats-card-header {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+}
+
+.stats-card-body {
+
+}

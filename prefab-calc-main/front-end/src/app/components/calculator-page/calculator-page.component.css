@@ -1,0 +1,20 @@
+:host ::ng-deep .p-sidebar-right {
+  width: 50% !important;
+}
+:host ::ng-deep .p-dataview-header {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(63, 63, 70, 0.25);
+}
+:host ::ng-deep .p-dataview-content {
+  border-radius: 8px;
+  border: 1px solid rgba(63, 63, 70, 0.25);
+}
+
+@media screen and (max-width: 1024px) {
+  :host ::ng-deep .p-sidebar-right {
+    width: 100% !important;
+  }
+}
+
+/*# sourceMappingURL=calculator-page.component.css.map */

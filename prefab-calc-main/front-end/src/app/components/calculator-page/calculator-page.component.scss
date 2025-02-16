@@ -1,0 +1,22 @@
+:host ::ng-deep {
+  .p-sidebar-right {
+    width: 50% !important;
+  }
+
+  .p-dataview-header {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid transparentize(#3f3f46, 0.75);
+  }
+
+  .p-dataview-content {
+    border-radius: 8px;
+    border: 1px solid transparentize(#3f3f46, 0.75);
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  :host ::ng-deep .p-sidebar-right {
+    width: 100% !important;
+  }
+}

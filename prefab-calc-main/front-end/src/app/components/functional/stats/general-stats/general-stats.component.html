@@ -1,0 +1,106 @@
+<div class="flex flex-row align-items-center w-full justify-content-center">
+  <div class="grid col-10">
+
+    <div
+      class="col-12 grid h-full sm:col-12 md:col-12 lg:col-12 xl:col-5 fadein animation-duration-300 animation-ease-in">
+      <div class="col-12">
+        <div id="order-stats" class="stats-card h-9rem">
+          <div class="flex flex-column">
+            <div class="flex flex-row justify-content-between gap-4">
+              <i class="pi pi-shopping-cart bg-purple-100 p-2 border-round text-purple-500"></i>
+              <div class="align-self-end text-3xl">
+                <span class="text-purple-500 font-semibold">{{ stats.order_count }} </span>
+                <span class="text-color-secondary">comenzi</span>
+              </div>
+            </div>
+            <div class="text-color-secondary align-self-end">
+              din care
+              <span class="text-purple-400">{{ stats.finalized_order_count }} </span>
+              finalizate
+            </div>
+            <div class="text-color-secondary align-self-center mt-5">în valoare de <span
+              class="text-green-400 font-semibold">{{ stats.total_order_value }} RON</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div id="prefab-stats" class="stats-card h-9rem">
+          <div class="flex flex-column">
+            <div class="flex flex-row justify-content-between gap-4">
+              <i class="pi pi-building bg-cyan-100 p-2 border-round text-cyan-500"></i>
+              <div class="align-self-end text-3xl">
+                <span class="text-cyan-500 font-semibold">{{ stats.prefab_count }} </span>
+                <span class="text-color-secondary">produse</span>
+              </div>
+            </div>
+            <div class="text-color-secondary align-self-end">
+              în
+              <span class="text-cyan-400">{{ stats.categories_count }} </span>
+              categorii
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <div id="product-stats" class="stats-card h-9rem">
+          <div class="flex flex-column">
+            <div class="flex flex-row justify-content-between gap-4">
+              <i class="pi pi-wave-pulse bg-orange-100 p-2 border-round text-orange-500"></i>
+              <div class="align-self-end text-2xl">
+                <span class="text-orange-500 font-semibold">top </span>
+                <span class="text-color-secondary">seller</span>
+              </div>
+            </div>
+            <div class="text-orange-500 align-self-end">
+              {{ stats.most_sold_product.name }}
+            </div>
+            <div class="text-color-secondary align-self-center mt-5">
+              cu
+              <span class="text-orange-400 font-semibold">{{ stats.most_sold_product.quantity }}</span>
+              bucăți vândute
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-12 sm:col-12 md:col-12 lg:col-12 xl:col-7 pr-4 fadein animation-duration-300 animation-ease-in h-full">
+      <div id="client-stats" class="stats-card h-29rem">
+        <div class="flex-column">
+          <div class="flex flex-row justify-content-between gap-4">
+            <i class="pi pi-trophy bg-green-100 p-2 border-round text-green-500"></i>
+            <div class="align-self-end text-3xl">
+              <span class="text-green-500 font-semibold">Top clienți</span>
+            </div>
+          </div>
+          <p-divider class="mt-4"></p-divider>
+          <p-table [value]="stats.top_10_clients" [tableStyle]="{'background': 'transparent'}" scrollable="true"
+                   [scrollHeight]="'22rem'" styleClass="p-datatable-sm p-datatable-striped">
+            <ng-template pTemplate="header">
+              <tr>
+                <th></th>
+                <th class="text-left">Nume</th>
+                <th class="text-left">Comenzi</th>
+                <th class="text-left">Valoare</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-client let-i="rowIndex">
+              <tr>
+                <td>{{ i + 1 }}.</td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.order_count }}</td>
+                <td>{{ client.total_spent }} RON</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

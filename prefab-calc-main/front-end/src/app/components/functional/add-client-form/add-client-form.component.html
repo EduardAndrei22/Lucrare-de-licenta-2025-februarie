@@ -1,0 +1,65 @@
+<div class="flex p-fluid flex-column">
+  <h3>Date client</h3>
+  <form [formGroup]="addClientForm!">
+    <div class="grid grid-nogutter col-12 gap-2">
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="name" type="text" id="name" />
+          <label for="name">Denumire</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input
+            pInputText
+            formControlName="address"
+            type="text"
+            id="address"
+          />
+          <label for="address">Adresă</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <p-inputMask
+            mask="+99 999 999 999"
+            formControlName="phone"
+            type="text"
+            id="phone"
+          />
+          <label for="phone">Telefon</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="email" type="email" id="email" />
+          <label for="email">E-mail</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="bank" type="text" id="bank" />
+          <label for="bank">Bancă</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="iban" type="text" id="iban" />
+          <label for="iban">IBAN</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="cui" type="text" id="cui" />
+          <label for="cui">CUI</label>
+        </p-floatLabel>
+      </div>
+      <div class="mt-4">
+        <p-floatLabel>
+          <input pInputText formControlName="reg" type="text" id="reg" />
+          <label for="reg">Nr. înregistrare</label>
+        </p-floatLabel>
+      </div>
+    </div>
+  </form>
+</div>

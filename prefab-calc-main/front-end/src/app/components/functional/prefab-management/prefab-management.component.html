@@ -1,0 +1,275 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<p-dialog
+  header="Adaugă"
+  [(visible)]="addDialog"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [maximizable]="true"
+  [style]="{ width: '75svw' }"
+  (onHide)="cancelPrefabCreation()"
+>
+  <ng-template pTemplate="content">
+    <app-add-prefab />
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-divider></p-divider>
+    <div class="flex flex-row justify-content-between align-items-center">
+      <p-button
+        pRipple
+        type="button"
+        icon="pi pi-times"
+        label="Anulează"
+        styleClass="p-button-text"
+        (click)="cancelPrefabCreation()"
+      />
+      <p-button
+        pRipple
+        type="button"
+        icon="pi pi-check"
+        label="Salvează"
+        styleClass="p-button-success"
+        [disabled]="!saveActive"
+        (click)="onPrefabSave()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-card styleClass="p-2 m-0 ml-2 mt-2 p-fluid" [style]="{ width: '85svw' }">
+  <ng-template pTemplate="header">
+    <div
+      class="flex flex-row justify-content-between align-items-center pl-4 pr-4"
+    >
+      <h2 class="p-m-0">Prefabricate</h2>
+      <p-button
+        pRipple
+        type="button"
+        icon="pi pi-plus"
+        label="Adaugă"
+        styleClass="w-auto p-button-rounded p-button-success p-button-text"
+        (click)="onPrefabAdd()"
+      ></p-button>
+    </div>
+    <p-divider></p-divider>
+  </ng-template>
+  <p-table
+    #dt
+    responsiveLayout="stack"
+    [breakpoint]="'960px'"
+    [value]="prefabItems"
+    [scrollable]="true"
+    scrollHeight="60svh"
+    dataKey="id"
+    editMode="row"
+    [resizableColumns]="true"
+    columnResizeMode="expand"
+    [rowHover]="true"
+    [tableStyle]="{ 'min-width': '150px' }"
+    sortMode="multiple"
+    [globalFilterFields]="['name', 'category', 'product_code']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex flex-row justify-content-between align-items-center">
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              (input)="filterTable($event, dt)"
+              placeholder="Caută..."
+            />
+          </p-iconField>
+          <p-toggleButton
+            [onLabel]="'Mod editare'"
+            [offLabel]="'Mod vizionare'"
+            (onChange)="toggleEditMode($event)"
+            styleClass="ml-2"
+          ></p-toggleButton>
+        </div>
+        <p-multiSelect
+          display="chip"
+          [options]="cols"
+          [(ngModel)]="selectedColumns"
+          optionLabel="header"
+          selectedItemsLabel="{0} columns selected"
+          [style]="{ 'min-width': '400px' }"
+          placeholder="Choose Columns"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="flex: 0 0 10%"></th>
+        @for (col of selectedColumns; track $index) {
+          <th
+            [pSortableColumn]="col.field"
+            style="flex: 0 0 100px"
+            pResizableColumn
+          >
+            {{ col.header }}
+            <p-sortIcon [field]="col.field"></p-sortIcon>
+          </th>
+        }
+        <th style="flex: 0 0 40px"></th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-prefabItem
+      let-editing="editing"
+      let-ri="rowIndex"
+    >
+      <tr [pEditableRow]="prefabItem">
+        <td>
+          <p-image
+            preview="true"
+            [src]="prefabItem.thumbnail.length > 0 ? prefabItem.thumbnail : getPlaceholderURL(prefabItem.name)"
+            alt="Thumbnail"
+            width="100"
+            height="100"
+          ></p-image>
+        </td>
+        @for (col of selectedColumns; track $index) {
+          @if (!["instock", "category", "stock", "price"].includes(col.field)) {
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="prefabItem[col.field]"
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ prefabItem[col.field] }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          } @else if (col.field === "instock") {
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <p-dropdown
+                    [options]="statuses"
+                    [(ngModel)]="prefabItem.instock"
+                    optionLabel="label"
+                    optionValue="value"
+                    appendTo="body"
+                  ></p-dropdown>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  <p-tag
+                    [value]="getValueByStock(prefabItem.instock)"
+                    [severity]="getSeverityByStock(prefabItem.instock)"
+                  ></p-tag>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          } @else if (col.field === "category") {
+            <td>
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <p-dropdown
+                    [options]="categories"
+                    [(ngModel)]="prefabItem.category.label"
+                    optionLabel="label"
+                    optionValue="label"
+                    appendTo="body"
+                  ></p-dropdown>
+                </ng-template>
+
+                <ng-template pTemplate="output">
+                  {{ prefabItem.category.label }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          } @else if (col.field === "stock") {
+            <td>
+              <p-cellEditor
+                *ngIf="!defaultItems.includes(prefabItem.internalname)"
+              >
+                <ng-template pTemplate="input">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="prefabItem.stock"
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ prefabItem.stock }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          } @else if (col.field === "price") {
+            <td>
+              <p-cellEditor
+                *ngIf="!defaultItems.includes(prefabItem.internalname)"
+              >
+                <ng-template pTemplate="input">
+                  <p-inputNumber type="text" [(ngModel)]="prefabItem.price" />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ prefabItem.price }}
+                </ng-template>
+              </p-cellEditor>
+            </td>
+          }
+        }
+        <td
+          *ngIf="editModeEnabled"
+          pFrozenColumn
+          alignFrozen="right"
+          class="p-0 bg-transparent"
+        >
+          <div class="flex align-items-center justify-content-center gap-2 p-0">
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              (click)="onRowEdit(prefabItem)"
+              class="p-button-rounded p-button-text bg-primary-100 shadow-3 text-primary-900"
+            ></button>
+            <button
+              *ngIf="!editing"
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              (click)="onRowDelete(prefabItem, $event)"
+              class="p-button-rounded p-button-text bg-red-100 shadow-3 text-red-900"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              (click)="onRowEditSave(prefabItem)"
+              class="p-button-rounded p-button-text p-button-success mr-2 bg-green-100 shadow-3 text-green-900"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              (click)="onRowEditCancel(prefabItem, ri)"
+              class="p-button-rounded p-button-text p-button-danger bg-red-100 shadow-3 text-red-900"
+            ></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-card>

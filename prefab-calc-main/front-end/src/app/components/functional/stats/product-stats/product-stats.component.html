@@ -1,0 +1,27 @@
+<div class="flex flex-row align-items-center w-full justify-content-center">
+  <div class="grid col-10">
+    <div
+      class="grid col-12 h-full fadein animation-duration-300 animation-ease-in">
+      <div class="col-12">
+        <div class="stats-card">
+          <p-selectButton (onChange)="changeSalesOpt()" [options]="viewOptions" [(ngModel)]="selectedView" optionLabel="name" optionValue="value"
+                          [style]="{width: '100%'}"></p-selectButton>
+          <div echarts (chartInit)="setSalesByDateInstance($event)" class="edit-switch" style="overflow: visible" [initOpts]="{renderer: 'svg'}" [theme]="currentTheme"
+               [options]="salesByDateOpts"></div>
+        </div>
+      </div>
+      <div class="col-12 xl:col-6">
+        <div class="stats-card">
+          <div echarts class="edit-switch" style="overflow: visible" [initOpts]="{renderer: 'svg'}" [theme]="currentTheme"
+               [options]="mostSoldOpts"></div>
+        </div>
+      </div>
+      <div class="col-12 xl:col-6">
+        <div class="stats-card">
+          <div echarts class="edit-switch" style="overflow: visible" [initOpts]="{renderer: 'svg'}" [theme]="currentTheme"
+               [options]="mostRevenueOpts"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

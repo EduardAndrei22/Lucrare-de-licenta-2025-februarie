@@ -1,0 +1,35 @@
+<p-toast></p-toast>
+
+<p-card styleClass="w-full p-2 m-0 ml-2 mt-2 p-fluid">
+  <ng-template pTemplate="header">
+    <div class="pl-4 pr-4">
+      <h2 class="p-m-0">Variabile</h2>
+    </div>
+  </ng-template>
+  <p>Introdu parola Master curentă & pe cea nouă mai jos</p>
+  <form [formGroup]="masterPassword" (ngSubmit)="changeMasterPassword()">
+    <div class="mt-5">
+      <p-floatLabel>
+        <p-password
+          [toggleMask]="true"
+          [feedback]="false"
+          formControlName="currentPassword"
+          id="currentPassword"
+        />
+        <label for="currentPassword">Parolă Master curentă</label>
+      </p-floatLabel>
+    </div>
+    <div class="mt-5">
+      <p-floatLabel>
+        <p-password
+          [toggleMask]="true"
+          [feedback]="false"
+          formControlName="newPassword"
+          id="newPassword"
+        />
+        <label for="newPassword">Noua parolă Master</label>
+      </p-floatLabel>
+    </div>
+    <button class="mt-5" pButton type="submit" label="Actualizare parolă"></button>
+  </form>
+</p-card>

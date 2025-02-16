@@ -1,0 +1,447 @@
+<p-toast></p-toast>
+
+<p-confirmDialog dismissableMask="true" #cd appendTo="body">
+  <ng-template pTemplate="headless" let-message>
+    <div class="flex flex-column align-items-center p-5 border-round">
+      <div
+        class="border-circle bg-red-600 inline-flex justify-content-center align-items-center h-6rem w-6rem"
+      >
+        <i class="pi pi-exclamation-triangle text-white text-5xl"></i>
+      </div>
+      <span class="font-bold text-2xl block mb-2 mt-4">
+        {{ message.header }}
+      </span>
+      <p class="mb-0">{{ message.message.split("|")[0] }}</p>
+      <p class="mb-0 mt-0">{{ message.message.split("|")[1] }}</p>
+      <div class="flex align-items-center gap-2 mt-4">
+        <button
+          pButton
+          label="Nu"
+          (click)="cd.reject()"
+          class="p-button-outlined w-8rem"
+        ></button>
+        <button
+          pButton
+          label="Da"
+          (click)="cd.accept()"
+          class="w-8rem"
+        ></button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmDialog>
+
+<p-dialog
+  modal="true"
+  [(visible)]="displayAddPrefabDialog"
+  [style]="{ width: '80svw', minWidth: '400px' }"
+  [draggable]="false"
+  dismissableMask="true"
+  maximizable="true"
+  appendTo="body"
+>
+  <ng-template pTemplate="header">
+    <div class="flex flex-row gap-2 align-items-center">
+      <p class="text-2xl font-bold w-fit">Adaugă produs</p>
+      <p-button
+        label="Creează produs"
+        icon="pi pi-plus"
+        styleClass="p-button-rounded p-button-outlined"
+        text
+        (click)="displayNewPrefabDialog = true"
+      ></p-button>
+    </div>
+  </ng-template>
+  <p-divider/>
+  <ng-template pTemplate="content">
+    <p-table
+      #dt
+      responsiveLayout="stack"
+      [breakpoint]="'768px'"
+      [scrollable]="true"
+      scrollHeight="60svh"
+      [rowHover]="true"
+      [tableStyle]="{ 'min-width': '150px' }"
+      sortMode="multiple"
+      [globalFilterFields]="['name', 'product_code']"
+      [value]="prefabList"
+      dataKey="id"
+    >
+      <ng-template pTemplate="caption">
+        <p-iconField iconPosition="left" class="ml-auto">
+          <p-inputIcon>
+            <i class="pi pi-search"></i>
+          </p-inputIcon>
+          <input
+            pInputText
+            type="text"
+            (input)="filterTable($event, dt)"
+            placeholder="Caută... (nume sau cod)"
+          />
+        </p-iconField>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10%"></th>
+          <th>Denumire</th>
+          <th>Cod</th>
+          <th>Preț</th>
+          <th>Stoc</th>
+          <th>
+            <div class="flex flex-row justify-content-center align-items-center">Acțiuni</div>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-prefab>
+        <tr>
+          <td>
+            <p-image
+              [src]="prefab.thumbnail.length > 2 ? prefab.thumbnail : getPlaceholderURL(prefab.name)"
+              preview="true"
+              alt="product"
+              width="75"
+              height="75"
+              appendTo="body"
+            ></p-image>
+          </td>
+          <td>
+            <p>{{ prefab.name }}</p>
+          </td>
+          <td>
+            <p>{{ prefab.product_code }}</p>
+          </td>
+          <td>
+            <p>{{ prefab.price }} lei</p>
+          </td>
+          <td>
+            <p>{{ prefab.stock }} buc</p>
+          </td>
+          <td>
+            <div
+              class="flex flex-row justify-content-center align-items-center"
+              [pTooltip]="
+                orderHasItem(prefab)
+                  ? 'Produsul este deja în comandă'
+                  : 'Adaugă în comandă'
+              "
+              tooltipPosition="top"
+            >
+              <p-button
+                icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-outlined p-button-success"
+                text
+                [disabled]="orderHasItem(prefab)"
+                (click)="addItem(prefab)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  modal="true"
+  header="Crează un nou produs"
+  [(visible)]="displayNewPrefabDialog"
+  [style]="{ width: '50vw', minWidth: '400px' }"
+  [draggable]="false"
+  dismissableMask="true"
+  maximizable="true"
+  appendTo="body"
+>
+  <p-divider/>
+  <app-add-prefab/>
+  <p-divider/>
+  <ng-template pTemplate="footer">
+    <div class="d-flex flex-row gap-2 align-content-end">
+      <p-button styleClass="p-button-secondary" label="Renunță"/>
+      <p-button label="Salvează" (onClick)="onPrefabSave()"/>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  modal="true"
+  header="Adaugă client"
+  [(visible)]="displayAddClientDialog"
+  [style]="{ width: '50vw', minWidth: '400px' }"
+  [draggable]="false"
+  dismissableMask="true"
+  maximizable="true"
+>
+  <p-divider/>
+  <app-add-client-form/>
+  <ng-template pTemplate="footer">
+    <div class="pl-2 mt-4 flex flex-row gap-2">
+      <p-button
+        type="reset"
+        label="Resetează"
+        styleClass="p-button-secondary"
+        (click)="resetForm()"
+      ></p-button>
+      <p-button type="submit" label="Adaugă" (click)="addClient()"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<div class="m-0 p-2 px-4 flex flex-column lg:flex-row gap-2 col-12 h-full">
+  <div class="flex flex-column gap-2 w-full">
+    <div class="flex justify-content-between align-items-center">
+      <div class="flex flex-row gap-2 align-items-center">
+        <p class="text-2xl font-bold w-fit">Comandă activă</p>
+        <p-button label="Adaugă produs" icon="pi pi-plus" styleClass="p-button-rounded p-button-outlined" (click)="displayAddPrefabDialog = true"></p-button>
+      </div>
+      <p-button
+        label="Renunță"
+        icon="pi pi-trash"
+        styleClass="p-button-rounded p-button-outlined p-button-danger"
+        text
+        (onClick)="cancelCurrentOrder()"
+      ></p-button>
+    </div>
+    <p-divider/>
+    <h4 *ngIf="currentOrder.items.length <= 0">
+      Comanda curentă nu conține niciun produs.
+    </h4>
+    <p-table
+      *ngIf="currentOrder.items.length > 0"
+      [value]="currentOrder.items"
+      dataKey="id"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 10%"></th>
+          <th>Discount global</th>
+          <th style="width: 20%">Denumire</th>
+          <th style="width: 10%">Cantitate</th>
+          <th style="width: 10%">Preț unitar</th>
+          <th style="width: 10%">Discount</th>
+          <th style="width: 20%">Preț total</th>
+          <th style="width: 10%"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-editing="editing">
+        <tr>
+          <td>
+            <p-image
+              [src]="item.thumbnail.length > 2 ? item.thumbnail : getPlaceholderURL(item.name)"
+              preview="true"
+              alt="product"
+              width="75"
+              height="75"
+            ></p-image>
+          </td>
+          <td>
+            <p-checkbox
+              [(ngModel)]="item.globalDiscount"
+              binary="true"
+              (onChange)="
+                computeProductTotal(item.price, item.quantity, item.discount)
+              "
+            ></p-checkbox>
+          </td>
+          <td>
+            <p>{{ item.name }}</p>
+          </td>
+          <td>
+            <p-inputNumber
+              [style]="{ width: '6rem' }"
+              [min]="1"
+              [step]="1"
+              showButtons="true"
+              suffix=" buc"
+              buttonLayout="vertical"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              [(ngModel)]="item.quantity"
+              (ngModelChange)="
+                computeProductTotal(item.price, item.quantity, item.discount)
+              "
+            ></p-inputNumber>
+          </td>
+          <td>
+            <p>{{ item.price }} lei</p>
+          </td>
+          <td>
+            <p-inputNumber
+              [style]="{ width: '6rem' }"
+              [min]="0"
+              [max]="100"
+              [step]="1"
+              showButtons="true"
+              suffix=" %"
+              buttonLayout="vertical"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              [(ngModel)]="item.discount"
+              (ngModelChange)="
+                computeProductTotal(item.price, item.quantity, item.discount)
+              "
+            ></p-inputNumber>
+          </td>
+          <td>
+            <p>
+              {{
+                computeProductTotal(
+                  item.price,
+                  item.quantity,
+                  item.discount,
+                  false
+                )
+              }}
+              lei
+            </p>
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-trash"
+              styleClass="p-button-rounded p-button-outlined p-button-danger"
+              text
+              (click)="removeItem(item)"
+            ></p-button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-divider [layout]="dividerLayout"/>
+  <div class="flex flex-column gap-2 p-fluid">
+    <p class="text-2xl font-bold w-fit mb-0">Detalii</p>
+    <p-divider/>
+    <p-scrollPanel
+      styleClass="w-25rem"
+      [style]="{ height: 'calc(100dvh - 460px)' }"
+    >
+      <p class="font-bold w-fit mb-0">Date client</p>
+      <div class="flex flex-column">
+        <p-dropdown
+          appendTo="body"
+          [options]="clients"
+          [filter]="true"
+          [emptyMessage]="'Niciun client găsit'"
+          [emptyFilterMessage]="'Niciun rezultat găsit'"
+          [(ngModel)]="selectedClient"
+          [showClear]="true"
+          (onClear)="selectedClient = {}"
+          filterBy="name"
+          optionLabel="name"
+          placeholder="Selectează client"
+        ></p-dropdown>
+        @if (!clientSelected()) {
+          <div class="flex flex-column">
+            <p
+              class="align-self-center text-color-secondary p-unselectable-text"
+            >
+              sau
+            </p>
+            <p-button
+              label="Adaugă client"
+              icon="pi pi-plus"
+              styleClass="p-button-rounded p-button-outlined p-button-success"
+              text
+              (onClick)="displayAddClientDialog = true"
+            ></p-button>
+          </div>
+        } @else {
+          <div class="flex flex-column p-2">
+            <div class="flex flex-row align-items-center gap-2 mt-2">
+              <i class="pi pi-user"></i>
+              <p class="font-bold mb-0 mt-0">
+                {{ selectedClient.name }} | {{ selectedClient.cui }}
+              </p>
+            </div>
+            <div class="flex flex-row align-items-center gap-2 mt-2">
+              <i class="pi pi-envelope"></i>
+              <p class="mb-0 mt-0">{{ selectedClient.email }}</p>
+            </div>
+            <div class="flex flex-row align-items-center gap-2 mt-2">
+              <i class="pi pi-phone"></i>
+              <p class="mb-0 mt-0">{{ selectedClient.phone }}</p>
+            </div>
+          </div>
+        }
+        <p-divider/>
+        <p class="font-bold w-fit mb-0">Detalii comandă</p>
+        <div class="flex flex-column gap-2 mt-4">
+          <div class="flex-auto">
+            <label class="block font-bold" for="deliveryDate"
+            >Dată scadentă</label>
+            <p-calendar
+              appendTo="body"
+              id="deliveryDate"
+              inputId="deliveryDate"
+              [(ngModel)]="currentOrder.due_date"
+              showIcon="true"
+              iconDisplay="input"
+              [showButtonBar]="true"
+              [showOnFocus]="true"
+              [numberOfMonths]="1"
+              [disabledDays]="[0, 6]"
+              placeholder="Selectează data"
+            ></p-calendar>
+            <div class="flex-auto mt-4">
+              <label class="block font-bold" for="discount">Discount</label>
+              <p-inputNumber
+                [min]="0"
+                [max]="100"
+                [step]="1"
+                id="discount"
+                inputId="discount"
+                showButtons="true"
+                buttonLayout="horizontal"
+                incrementButtonIcon="pi pi-plus"
+                decrementButtonIcon="pi pi-minus"
+                [(ngModel)]="currentOrder.discount"
+                (ngModelChange)="computeOrderTotal()"
+                suffix=" %"
+                placeholder="Discount global"
+              ></p-inputNumber>
+            </div>
+            <div class="flex-auto mt-4">
+              <label class="block font-bold" for="shipping">Transport</label>
+              <p-inputNumber
+                (onBlur)="computeOrderTotal()"
+                [(ngModel)]="currentOrder.shipping"
+                [min]="0"
+                id="shipping"
+                inputId="shipping"
+                placeholder="Transport"
+                suffix=" lei"
+              ></p-inputNumber>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-scrollPanel>
+    <p-divider></p-divider>
+    <div class="flex flex-column gap-2">
+      <div class="flex flex-row justify-content-between align-items-center">
+        <p class="text-l font-bold w-fit m-0">Subtotal</p>
+        <p class="text-l m-0">{{ currentOrder.subtotal }} lei</p>
+      </div>
+      <div class="flex flex-row justify-content-between align-items-center">
+        <p class="text-l font-bold w-fit m-0">Discount</p>
+        <p class="text-l text-red-500 m-0">{{ getDiscount() }} lei</p>
+      </div>
+      <div class="flex flex-row justify-content-between align-items-center">
+        <p class="text-l font-bold w-fit m-0">Transport</p>
+        <p class="text-l text-green-500 m-0">{{ getShipping() }} lei</p>
+      </div>
+      <div class="flex flex-row justify-content-between align-items-center">
+        <p class="text-xl font-bold w-fit m-0">Total</p>
+        <p class="text-xl text-primary font-bold m-0">
+          {{ currentOrder.total }} lei
+        </p>
+      </div>
+    </div>
+    <p-button
+      (click)="sendOrder()"
+      [disabled]="isButtonDisabled()"
+      icon="pi pi-send"
+      label="Finalizează comanda"
+      styleClass="p-button-primary"
+    ></p-button>
+  </div>
+</div>

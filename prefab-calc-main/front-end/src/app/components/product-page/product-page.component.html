@@ -1,0 +1,156 @@
+<p-toast></p-toast>
+
+<p-dialog
+  header="Adaugă"
+  [(visible)]="addDialog"
+  [modal]="true"
+  [draggable]="false"
+  [dismissableMask]="true"
+  [maximizable]="true"
+  [style]="{ width: '75svw' }"
+  (onHide)="cancelPrefabCreation()"
+>
+  <ng-template pTemplate="content">
+    <app-add-prefab />
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-divider></p-divider>
+    <div class="flex flex-row justify-content-between align-items-center">
+      <p-button
+        pRipple
+        type="button"
+        icon="pi pi-times"
+        label="Anulează"
+        styleClass="p-button-text"
+        (click)="cancelPrefabCreation()"
+      />
+      <p-button
+        pRipple
+        type="button"
+        icon="pi pi-check"
+        label="Salvează"
+        styleClass="p-button-success"
+        [disabled]="!saveActive"
+        (click)="onPrefabSave()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+<div class="w-full pl-3 pr-3 pb-3">
+  <div class="flex flex-row">
+    <p-menu [model]="menuItems" styleClass="m-2" />
+
+    <div class="flex flex-column mt-0">
+      <div
+        class="flex flex-row gap-2 justify-content-between align-items-center"
+      >
+        <div class="flex flex-row gap-2 align-items-center">
+          <h2 class="ml-4">{{ getCurrentCategoryName() }}</h2>
+          @if (currentCategory !== "all") {
+            <p-button
+              (onClick)="openAddPrefab()"
+              label="Adaugă"
+              type="button"
+              styleClass="p-button-text p-button-success p-button-rounded"
+              icon="pi pi-plus"
+            ></p-button>
+          }
+        </div>
+        <div class="pr-2">
+          <input pInputText placeholder="Caută..." (input)="filterBy($event)" />
+        </div>
+      </div>
+      <p-dataView [value]="currentItems" [layout]="'grid'">
+        <ng-template pTemplate="grid" let-item.items>
+          <div class="grid grid-nogutter fullwidth">
+            @for (prefabItem of currentItems; track prefabItem.id) {
+              <div class="col-12 sm:col-6 md:col-3 p-2">
+                <div
+                  class="p-4 border-1 surface-border surface-card border-round flex flex-column"
+                >
+                  <div
+                    class="surface-50 flex justify-content-center border-round p-3"
+                  >
+                    <div class="relative mx-auto">
+                      <p-tag
+                        [value]="
+                          getValueByStock(prefabItem.instock).toUpperCase()
+                        "
+                        [severity]="getSeverityByStock(prefabItem.instock)"
+                        class="absolute z-1"
+                        [style.left.px]="4"
+                        [style.top.px]="4"
+                      />
+                      <p-image
+                        [src]="
+                          prefabItem.thumbnail.length > 0
+                            ? prefabItem.thumbnail
+                            : getPlaceholderURL(prefabItem.name)
+                        "
+                        [alt]="prefabItem.name"
+                        width="100%"
+                        [preview]="true"
+                      />
+                    </div>
+                  </div>
+                  <div class="pt-4">
+                    <div
+                      class="flex flex-row justify-content-between align-items-start gap-2"
+                    >
+                      <div>
+                        <a
+                          (click)="openSingleProductPage(prefabItem)"
+                          class="p-link text-lg font-medium text-900 mt-1"
+                        >
+                          {{ prefabItem.name }}
+                        </a>
+                        <div class="font-medium text-secondary text-sm">
+                          {{ prefabItem.description }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-column gap-4 mt-4">
+                      <div class="flex gap-2">
+                        <div
+                          class="flex flex-row w-full col-12 gap-2 justify-content-between"
+                        >
+                          <input
+                            pInputText
+                            type="number"
+                            min="1"
+                            [(ngModel)]="prefabItem.quantity"
+                            [style.width.%]="35"
+                            [style.min-width.px]="50"
+                          />
+                          <p-button
+                            [disabled]="
+                              prefabItem.instock === 0 ||
+                              prefabItem.quantity === undefined ||
+                              prefabItem.quantity === 0 ||
+                              prefabItem.quantity === null
+                            "
+                            icon="pi pi-shopping-cart"
+                            label="Adaugă"
+                            (click)="addToCart(prefabItem)"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      </p-dataView>
+    </div>
+  </div>
+</div>
+
+<p-scrollTop
+  target="window"
+  styleClass="bg-primary-500 border-round-md p-ripple hover:bg-primary-400"
+  [threshold]="100"
+  icon="pi pi-arrow-up"
+/>

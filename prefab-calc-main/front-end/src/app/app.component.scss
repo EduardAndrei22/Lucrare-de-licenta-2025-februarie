@@ -1,0 +1,15 @@
+.margin-top-add {
+  margin-top: 100px;
+}
+
+::ng-deep .p-image-preview-indicator {
+  border-radius: 10px !important;
+}
+
+::ng-deep .p-image-preview-container {
+  border-radius: 10px !important;
+
+  img {
+    border-radius: 10px !important;
+  }
+}
